@@ -184,4 +184,147 @@ public class FluxAndMonoGeneratorServiceTest {
                 .expectNext("D", "E", "F", "A", "U", "L", "T")
                 .verifyComplete();
     }
+
+    @Test
+    void explore_concat() {
+        //given - precondition or setup
+
+        //when - action or behaviour to test
+        var concatFlux = fluxAndMonoGeneratorService.explore_concat();
+
+        //then - verify output
+        StepVerifier.create(concatFlux)
+                .expectNext("A", "B", "C", "D", "E", "F")
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_concat_with() {
+        //given - precondition or setup
+
+        //when - action or behaviour to test
+        var concatFlux = fluxAndMonoGeneratorService.explore_concatWith();
+
+        //then - verify output
+        StepVerifier.create(concatFlux)
+                .expectNext("A", "B", "C", "D", "E", "F")
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_concat_with_Mono() {
+        //given - precondition or setup
+
+        //when - action or behaviour to test
+        var concatFlux = fluxAndMonoGeneratorService.explore_concatWith_Mono();
+
+        //then - verify output
+        StepVerifier.create(concatFlux)
+                .expectNext("A", "B")
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_merge() {
+        //given - precondition or setup
+
+        //when - action or behaviour to test
+        var value = fluxAndMonoGeneratorService.explore_merge();
+
+        //then - verify output
+        StepVerifier.create(value)
+                .expectNext("A", "D", "B", "E", "C", "F")
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_merge_with() {
+        //given - precondition or setup
+
+        //when - action or behaviour to test
+        var value = fluxAndMonoGeneratorService.explore_merge_with();
+
+        //then - verify output
+        StepVerifier.create(value)
+                .expectNext("A", "D", "B", "E", "C", "F")
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_merge_with_Mono() {
+        //given - precondition or setup
+
+        //when - action or behaviour to test
+        var concatFlux = fluxAndMonoGeneratorService.explore_mergeWith_Mono();
+
+        //then - verify output
+        StepVerifier.create(concatFlux)
+                .expectNext("A", "B")
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_mergeSequential() {
+        //given - precondition or setup
+
+        //when - action or behaviour to test
+        var concatFlux = fluxAndMonoGeneratorService.explore_mergeSequential();
+
+        //then - verify output
+        StepVerifier.create(concatFlux)
+                .expectNext("A", "B", "C", "D", "E", "F")
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_zip() {
+        //given - precondition or setup
+
+        //when - action or behaviour going to test
+        var value = fluxAndMonoGeneratorService.explore_zip();
+
+        //then - verify output
+        StepVerifier.create(value)
+                .expectNext("AD", "BE", "CF")
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_zip_1() {
+        //given - precondition or setup
+
+        //when - action or behaviour going to test
+        var value = fluxAndMonoGeneratorService.explore_zip_1();
+
+        //then - verify output
+        StepVerifier.create(value)
+                .expectNext("AD14", "BE25", "CF36")
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_zipWith() {
+        //given - precondition or setup
+
+        //when - action or behaviour going to test
+        var value = fluxAndMonoGeneratorService.explore_zipWith();
+
+        //then - verify output
+        StepVerifier.create(value)
+                .expectNext("AD", "BE", "CF")
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_zip_with_Mono() {
+        //given - precondition or setup
+
+        //when - action or behaviour to test
+        var valueMono = fluxAndMonoGeneratorService.explore_zipWith_Mono();
+
+        //then - verify output
+        StepVerifier.create(valueMono)
+                .expectNext("AB")
+                .verifyComplete();
+    }
 }
