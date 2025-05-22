@@ -1,5 +1,6 @@
 package com.learnreactiveprogramming.service;
 
+import com.learnreactiveprogramming.exception.ReactorException;
 import org.junit.jupiter.api.Test;
 import reactor.test.StepVerifier;
 
@@ -11,7 +12,7 @@ public class FluxAndMonoGeneratorServiceTest {
 
     //Junit Test for
     @Test
-    public void namesFlux(){
+    public void namesFlux() {
         //given - precondition or setup
 
         //when  - action or behaviour that we are going to test
@@ -30,7 +31,7 @@ public class FluxAndMonoGeneratorServiceTest {
 
     //Junit Test for
     @Test
-    public void nameMono(){
+    public void nameMono() {
         //given - precondition or setup
 
         //when  - action or behaviour that we are going to test
@@ -80,7 +81,7 @@ public class FluxAndMonoGeneratorServiceTest {
 
         //then - verify output
         StepVerifier.create(namesFlux)
-                .expectNext("A", "L", "E", "X","C", "H", "L", "O", "E")
+                .expectNext("A", "L", "E", "X", "C", "H", "L", "O", "E")
                 .verifyComplete();
     }
 
@@ -109,7 +110,7 @@ public class FluxAndMonoGeneratorServiceTest {
 
         //then - verify output
         StepVerifier.create(namesFlux)
-                .expectNext("A", "L", "E", "X","C", "H", "L", "O", "E")
+                .expectNext("A", "L", "E", "X", "C", "H", "L", "O", "E")
                 //.expectNextCount(9)
                 .verifyComplete();
     }
@@ -152,7 +153,7 @@ public class FluxAndMonoGeneratorServiceTest {
 
         //verify - output
         StepVerifier.create(namesFlux)
-                .expectNext("A", "L", "E", "X","C", "H", "L", "O", "E")
+                .expectNext("A", "L", "E", "X", "C", "H", "L", "O", "E")
                 //.expectNextCount(9)
                 .verifyComplete();
     }
@@ -327,4 +328,132 @@ public class FluxAndMonoGeneratorServiceTest {
                 .expectNext("AB")
                 .verifyComplete();
     }
+
+    @Test
+    void exception_flux() {
+        //given - precondition or setup
+
+        //when - action or behaviour that we are going to test
+        var value = fluxAndMonoGeneratorService.exception_flux();
+
+        //then - verify output
+        StepVerifier.create(value)
+                .expectNext("A", "B", "C")
+                .expectError(RuntimeException.class)
+                .verify();
+    }
+
+    @Test
+    void exception_flux1() {
+        //given - precondition or setup
+
+        //when - action or behaviour that we are going to test
+        var value = fluxAndMonoGeneratorService.exception_flux();
+
+        //then - verify output
+        StepVerifier.create(value)
+                .expectNext("A", "B", "C")
+                .expectError()
+                .verify();
+    }
+
+    @Test
+    void exception_flux2() {
+        //given - precondition or setup
+
+        //when - action or behaviour that we are going to test
+        var value = fluxAndMonoGeneratorService.exception_flux();
+
+        //then - verify output
+        StepVerifier.create(value)
+                .expectNext("A", "B", "C")
+                .expectErrorMessage("Exception occurred")
+                .verify();
+    }
+
+    @Test
+    void explore_OnErrorReturn() {
+        //given - precondition or setup
+
+        //when - actin or behaviour that we are going to test
+        var value = fluxAndMonoGeneratorService.explore_OnErrorReturn();
+
+        //then - verify output
+        StepVerifier.create(value)
+                .expectNext("A", "B", "C", "D")
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_OnErrorResume() {
+        //given - precondition or setup
+        var e = new IllegalStateException("Exception Occurred");
+
+        //when - action or behaviour that we are going to test
+        var value = fluxAndMonoGeneratorService.explore_OnErrorResume(e);
+
+        //then - verify output
+        StepVerifier.create(value)
+                .expectNext("A", "B", "C", "D", "E", "F")
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_OnErrorResume1() {
+        //given - precondition or setup
+        var e = new RuntimeException("Exception Occurred");
+
+        //when - action or behaviour that we are going to test
+        var value = fluxAndMonoGeneratorService.explore_OnErrorResume(e);
+
+        //then - verify output
+        StepVerifier.create(value)
+                .expectNext("A", "B", "C")
+                .expectError(RuntimeException.class)
+                .verify();
+    }
+
+    @Test
+    void explore_OnErrorContinue() {
+        //given - precondition or setup
+
+        //when - action or behaviour that we are going to test
+        var value = fluxAndMonoGeneratorService.explore_OnErrorContinue();
+
+        //then - verify output
+        StepVerifier.create(value)
+                .expectNext("A", "C")
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_OnErrorMap() {
+        //given - precondition or setup
+
+        //when - action or behaviour that we are going to test
+        var value = fluxAndMonoGeneratorService.explore_OnErrorMap();
+
+        //then - verify output
+        StepVerifier.create(value)
+                .expectNext("A")
+                .expectError(ReactorException.class)
+                .verify();
+
+    }
+
+    @Test
+    void explore_doOnError() {
+        //given - precondition or setup
+
+        //when - action or behaviour that we are going to test
+        var value = fluxAndMonoGeneratorService.explore_doOnError();
+
+        //then - verify output
+        StepVerifier.create(value)
+                .expectNext("A", "B", "C")
+                .expectError(IllegalArgumentException.class)
+                .verify();
+    }
 }
+
+
