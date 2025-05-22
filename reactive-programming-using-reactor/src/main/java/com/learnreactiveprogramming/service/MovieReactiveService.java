@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import reactor.util.retry.Retry;
 import reactor.util.retry.RetryBackoffSpec;
 
@@ -20,10 +21,17 @@ public class MovieReactiveService {
 
     private MovieInfoService movieInfoService;
     private ReviewService reviewService;
+    private RevenueService revenueService;
 
     public  MovieReactiveService(MovieInfoService movieInfoService, ReviewService reviewService){
         this.movieInfoService = movieInfoService;
         this.reviewService = reviewService;
+    }
+
+    public MovieReactiveService(MovieInfoService movieInfoService, ReviewService reviewService, RevenueService revenueService) {
+        this.movieInfoService = movieInfoService;
+        this.reviewService = reviewService;
+        this.revenueService = revenueService;
     }
 
     public Flux<Movie> getAllMovies(){
@@ -142,5 +150,20 @@ public class MovieReactiveService {
         var movieInfoMono = movieInfoService.retrieveMovieInfoMonoUsingId(movieId);
         var reviewsList = reviewService.retrieveReviewsFlux(movieId).collectList();
         return movieInfoMono.zipWith(reviewsList, (movieInfo, reviews) -> new Movie(movieId, movieInfo, reviews));
+    }
+
+    public Mono<Movie> getMovieById_withRevenue(Long movieId){
+        var movieInfoMono = movieInfoService.retrieveMovieInfoMonoUsingId(movieId);
+        var reviewsList = reviewService.retrieveReviewsFlux(movieId).collectList();
+        //Revenue Service is having delay so its a blocking call and also its not returning Reactive type i.e Flux or Mono
+        //Making Blocking call as non blocking call
+        //Wrapping the response as Mono
+        var revenueMono = Mono.fromCallable(() -> revenueService.getRevenue(movieId))
+                .subscribeOn(Schedulers.boundedElastic());
+        return movieInfoMono.zipWith(reviewsList, (movieInfo, reviews) -> new Movie(movieId, movieInfo, reviews))
+                .zipWith(revenueMono, (movie, revenue) -> {
+                    movie.setRevenue(revenue);
+                    return movie;
+                });
     }
 }
