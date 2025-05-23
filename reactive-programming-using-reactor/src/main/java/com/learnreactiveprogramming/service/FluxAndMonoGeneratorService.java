@@ -8,7 +8,11 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+
+import static com.learnreactiveprogramming.util.CommonUtil.delay;
+
 @Slf4j
 public class FluxAndMonoGeneratorService {
 
@@ -328,6 +332,53 @@ public class FluxAndMonoGeneratorService {
                     log.error("exception is:", ex);
                 })
                 .log();
+    }
+
+    //programatically generate Flux and Mono
+    //Generate
+    public Flux<Integer> explore_generate(){
+        return Flux.generate(
+                () -> 1,  (state, sink) -> {
+                    sink.next(state * 2);
+                    if(state == 10){
+                        sink.complete();
+                    }
+                    return state + 1;
+                }
+        );
+    }
+
+    //Create
+    public Flux<String> explore_create(){
+        return Flux.create(sink -> {
+            CompletableFuture.supplyAsync(() -> names())
+                    .thenAccept(names -> {
+                        names.forEach(sink::next);
+                    })
+                    .thenRun(sink::complete);
+        });
+    }
+
+    //handle
+    public Flux<String> explore_handle(){
+        return Flux.fromIterable(List.of("alex", "ben", "chloe"))
+                .handle((name, sink) -> {
+                    if(name.length() > 3){
+                        sink.next(name.toUpperCase());
+                    }
+                });
+    }
+
+    //Mono Create
+    public Mono<String> explore_create_mono(){
+        return Mono.create(sink -> {
+            sink.success("alex");
+        });
+    }
+
+    public static List<String> names(){
+        delay(1000);
+        return List.of("alex", "ben", "chloe");
     }
 
     public static void main(String[] args) {

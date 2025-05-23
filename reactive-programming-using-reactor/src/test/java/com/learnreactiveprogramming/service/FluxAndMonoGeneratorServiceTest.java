@@ -8,6 +8,8 @@ import reactor.test.scheduler.VirtualTimeScheduler;
 import java.time.Duration;
 import java.util.List;
 
+import static com.learnreactiveprogramming.util.CommonUtil.delay;
+
 public class FluxAndMonoGeneratorServiceTest {
 
     FluxAndMonoGeneratorService fluxAndMonoGeneratorService = new FluxAndMonoGeneratorService();
@@ -472,6 +474,61 @@ public class FluxAndMonoGeneratorServiceTest {
                 .expectNext("A", "B", "C")
                 .expectError(IllegalArgumentException.class)
                 .verify();
+    }
+
+    @Test
+    void explore_generate() {
+        //given - precondition or setup
+
+        //when - action or behaviour that we are going to test
+        var valuesFlux = fluxAndMonoGeneratorService.explore_generate().log();
+
+        //then - verify output
+        StepVerifier.create(valuesFlux)
+                .expectNextCount(10)
+                .verifyComplete();
+    }
+
+
+    @Test
+    void explore_create() {
+        //given - precondition or setup
+
+        //when - action or behaviour that we are going to test
+        var namesFlux = fluxAndMonoGeneratorService.explore_create().log();
+
+        //then - verify output
+        StepVerifier.create(namesFlux)
+                .expectNext("alex", "ben", "chloe")
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_handle() {
+        //given - preconditon or setup
+
+        //when - actin or behaviour that we are going to test
+        var flux = fluxAndMonoGeneratorService.explore_handle().log();
+
+        //then - verify output
+        StepVerifier.create(flux)
+                .expectNext("ALEX", "CHLOE")
+                .verifyComplete();
+
+    }
+
+    @Test
+    void explore_create_mono() {
+        //given - preconditon or setup
+
+        //when - actin or behaviour that we are going to test
+        var mono = fluxAndMonoGeneratorService.explore_create_mono().log();
+
+        //then - verify output
+        StepVerifier.create(mono)
+                .expectNext("alex")
+                .verifyComplete();
+
     }
 }
 
